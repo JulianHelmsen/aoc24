@@ -3,8 +3,6 @@
 
 typedef uint64_t op_list;
 
-#define op_list_set(list, idx, bit) ((list) | (((bit) & 1) << (idx)))
-#define op_list_get(list, idx) (((list) >> (idx)) & 1)
 
 uint64_t powu64(uint64_t a, uint64_t b) {
     uint64_t res = 1;
