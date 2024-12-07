@@ -16,6 +16,7 @@
 #include <limits.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <math.h>
 
 struct Ints {
     size_t capacity;
