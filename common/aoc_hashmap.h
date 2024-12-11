@@ -44,11 +44,23 @@ struct hashmap {
 #define hashmap_create(hash, eq, key_type, value_type) hashmap_create_impl(hash, eq, sizeof(key_type), sizeof(value_type))
 
 
+void hashmap_reserve(struct hashmap* map, size_t capacity);
 void hashmap_insert(struct hashmap* map, const void* pk, void* v);
 int hashmap_find(const struct hashmap* map, const void* pk, void* pv);
 int hashmap_remove(struct hashmap* map, const void* pk);
 
 #ifdef AOC_HASHMAP_IMPLEMENTATION
+
+void hashmap_reserve(struct hashmap* map, size_t capacity) {
+    assert(map->size == 0 && "Map must be empty to reserve");
+    const size_t ent_size = sizeof(struct hashmap_entry) + map->key_size + map->value_size;
+    map->capacity = capacity;
+    map->data = calloc(ent_size, capacity);
+    if(map->data == NULL) {
+        perror("calloc");
+        exit(1);
+    }
+}
 
 
 struct hashmap hashmap_create_impl(hash_func hash, eq_func eq, size_t ksize, size_t vsize) {
