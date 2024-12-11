@@ -32,6 +32,8 @@ int64_t sv_find_char(const struct sview s, const char c);
 
 struct sview sv_trim_left(struct sview s);
 
+uint64_t parse_u64(const struct sview v);
+
 
 #ifdef AOC_SVIEW_IMPLEMENTATION
 
@@ -142,6 +144,14 @@ struct sview sv_trim_left(struct sview s) {
     s.data += off;
     s.len -= off;
     return s;
+}
+
+uint64_t parse_u64(const struct sview v) {
+    uint64_t res = 0;
+    for(size_t i = 0; i < v.len && isdigit(v.data[i]); ++i) {
+        res = res * 10 + v.data[i] - '0';
+    }
+    return res;
 }
 
 #endif
