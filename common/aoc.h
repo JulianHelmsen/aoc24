@@ -27,6 +27,8 @@ struct Ints {
 
 struct Ints parse_ints(struct sview list, const char delim);
 
+char* sv_copy(struct sview s);
+
 
 #ifdef AOC_IMPLEMENTATION
 
@@ -52,6 +54,18 @@ struct Ints parse_ints(struct sview list, const char delim) {
     }
     return ints;
 }
+
+char* sv_copy(struct sview s) {
+    char* data = malloc(sizeof(char) * (s.len + 1));
+    if(data == NULL) {
+        perror("malloc");
+        exit(1);
+    }
+    memcpy(data, s.data, s.len * sizeof(char));
+    data[s.len] = '\0';
+    return data;
+}
+
 #endif
 
 
