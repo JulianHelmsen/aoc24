@@ -117,7 +117,7 @@ void hashmap_resize(struct hashmap* map) {
     }
 
     if(map->data != NULL) {
-        for(i = 0; i < newmap.capacity; ++i) {
+        for(i = 0; i < map->capacity; ++i) {
             addr = map->data + i * ent_size;
             ent = (struct hashmap_entry*) addr;
             if(ent->state == USED) {
