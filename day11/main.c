@@ -1,6 +1,41 @@
 #define AOC_IMPLEMENTATION
 #include <aoc.h>
 
+size_t digcount(uint64_t val) {
+    if(val < 10ull) return 1;
+    if(val < 100ull) return 2;
+    if(val < 1000ull) return 3;
+    if(val < 10000ull) return 4;
+    if(val < 100000ull) return 5;
+    if(val < 1000000ull) return 6;
+    if(val < 10000000ull) return 7;
+    if(val < 100000000ull) return 8;
+    if(val < 1000000000ull) return 9;
+    if(val < 10000000000ull) return 10;
+    if(val < 100000000000ull) return 11;
+    if(val < 1000000000000ull) return 12;
+    if(val < 10000000000000ull) return 13;
+    if(val < 100000000000000ull) return 14;
+    if(val < 1000000000000000ull) return 15;
+    if(val < 10000000000000000ull) return 16;
+    if(val < 100000000000000000ull) return 17;
+    if(val < 1000000000000000000ull) return 18;
+    if(val < 10000000000000000000ull) return 19;
+    return 20;
+}
+
+void split(int len, uint64_t v, uint64_t* restrict l, uint64_t* restrict r) {
+    int pwd = 1;
+    const int hlen = len >> 1;
+    for(int i = 0; i < hlen; ++i)
+        pwd *= 10;
+
+    *r = v % pwd;
+    *l = v / pwd;
+}
+
+
+
 struct stone {
     uint64_t val;
     int blink;
@@ -8,7 +43,7 @@ struct stone {
 
 size_t stone_hash(const void* v) {
     const struct stone stone = *(const struct stone*) v;
-    return stone.val + (uint64_t) stone.blink * 435513234;
+    return stone.val ^ (uint64_t) stone.blink * 435513234;
 }
 
 int stone_eq(const void* a, const void* b) {
@@ -24,87 +59,35 @@ static uint64_t count_stones(struct hashmap* map, uint64_t val, int blink) {
     if(hashmap_find(map, &s, &count)) {
         return count;
     }
-    char buf[32] = { 0 };
-    const int len = snprintf(buf, sizeof(buf), "%lu", val);
+
+    const int len = digcount(val);
     uint64_t res = 0;
     if(val == 0) {
         res = count_stones(map, 1, blink - 1);
     }else if(len & 1) {
         res = count_stones(map, val * 2024, blink - 1);
     }else{
-        const struct sview left = sv_create_with_len(buf, len / 2);
-        const struct sview right = sv_create(buf + len / 2);
-        uint64_t l = parse_u64(left);
-        uint64_t r = parse_u64(right);
+        uint64_t l;
+        uint64_t r;
+        split(len, val, &l, &r);
         res = count_stones(map, l, blink - 1);
         res += count_stones(map, r, blink - 1);
     }
     hashmap_insert(map, &s, &res);
     return res;
-
-#if 0
-    struct Vals {
-        size_t capacity;
-        size_t size;
-        uint64_t* data;
-    };
-
-    struct Vals lists[2] = { 0 };
-    da_append(lists[0], val);
-
-    for(int i = 0; i < blink; ++i) {
-        const int src = i & 1;
-        const int dst = (i + 1) & 1;
-
-        for(size_t j = 0; j < lists[src].size; ++j) {
-            uint64_t stone = lists[src].data[j];
-            char buf[32] = { 0 };
-            const int len = snprintf(buf, sizeof(buf), "%lu", stone);
-
-            if(stone == 0) {
-                da_append(lists[dst], 1);
-            }else if(len & 1) {
-                da_append(lists[dst], stone * 2024);
-            }else{
-                const struct sview left = sv_create_with_len(buf, len / 2);
-                const struct sview right = sv_create(buf + len / 2);
-                uint64_t l = parse_u64(left);
-                uint64_t r = parse_u64(right);
-                da_append(lists[dst], l);
-                da_append(lists[dst], r);
-            }
-        }
-        lists[src].size = 0;
-    }
-
-    struct Vals res = lists[0].size > 0 ? lists[0] : lists[1];
-
-    free(lists[0].data);
-    free(lists[1].data);
-    return res.size;
-#endif
 }
 
 int main(const int argc, const char** argv) {
     (void) argc;
     (void) argv;
-    if(argc != 2) {
-        fprintf(stderr, "Usage: %s <blink-count>\n", argv[0]);
-        exit(1);
-    }
-
-    const int blink_count = atoi(argv[1]);
-    if(blink_count == 0) {
-        fprintf(stderr, "blink count must be a positive integer\n");
-        exit(1);
-    }
-
     struct hashmap map = hashmap_create(stone_hash, stone_eq, struct stone, uint64_t);
+    struct hashmap map2 = hashmap_create(stone_hash, stone_eq, struct stone, uint64_t);
 
     char* line = NULL;
     ssize_t len;
     size_t n = 0;
     uint64_t task1 = 0;
+    uint64_t task2 = 0;
     while((len = getline(&line, &n, stdin)) != -1) {
         if(line[len - 1] == '\n')
             line[--len] = '\0';
@@ -118,16 +101,19 @@ int main(const int argc, const char** argv) {
             struct sview num;
             sv_split(l, ' ', &num, &l);
 
-            uint64_t val = strtol(num.data, NULL, 10);
-            uint64_t stone_count = count_stones(&map, val, blink_count);
-            task1 += stone_count;
+            const uint64_t val = strtol(num.data, NULL, 10);
+            task1 += count_stones(&map, val, 25);
+            task2 += count_stones(&map, val, 75);
             l = sv_trim_left(l);
         }
     }
     printf("task1: %lu\n", task1);
+    printf("task2: %lu\n", task2);
 
     free(line);
     free(map.data);
+    free(map2.data);
+
     return 0;
 }
 
