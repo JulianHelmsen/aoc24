@@ -18,6 +18,8 @@
 #include <stdbool.h>
 #include <math.h>
 
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+
 struct Ints {
     size_t capacity;
     size_t size;
