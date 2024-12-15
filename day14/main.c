@@ -213,7 +213,7 @@ int main(const int argc, const char** argv) {
         if(best_so_far > 1500) {
             printf("\rtime: %lu\tcurrent score: %lu, best score: %lu.\t\t Press CTRL+C to terminate search!", i, score, best_so_far);
         }else{
-            printf("\rtime: %lu\tscore: %lu, best: %lu", i, score, best_so_far);
+            printf("\rtime: %lu\tscore: %lu, best: %lu              ", i, score, best_so_far);
         }
 
         if(score > best_so_far) {
