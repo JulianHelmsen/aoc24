@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <errno.h>
 #define SVIEW_NPOS ((size_t) (-1))
 
 typedef int(*predicate)(int);
@@ -33,6 +34,7 @@ int64_t sv_find_char(const struct sview s, const char c);
 struct sview sv_trim_left(struct sview s);
 
 uint64_t sv_parse_u64(const struct sview v);
+int64_t sv_parse_i64(struct sview v);
 
 
 #ifdef AOC_SVIEW_IMPLEMENTATION
@@ -147,11 +149,34 @@ struct sview sv_trim_left(struct sview s) {
 }
 
 uint64_t sv_parse_u64(const struct sview v) {
+    if(v.len == 0) {
+        errno = EINVAL;
+        return 0;
+    }
     uint64_t res = 0;
     for(size_t i = 0; i < v.len && isdigit(v.data[i]); ++i) {
         res = res * 10 + v.data[i] - '0';
     }
     return res;
+}
+
+int64_t sv_parse_i64(struct sview v) {
+    if(v.len == 0) {
+        errno = EINVAL;
+        return 0;
+    }
+    int64_t fac = 1;
+    if(v.data[0] == '-') {
+        fac = -1;
+        v = sv_subview(v, 1, SVIEW_NPOS);
+    }
+
+    const uint64_t res = sv_parse_u64(v); 
+    if(res & (1ul << 63)) {
+        errno = ERANGE;
+        return 0;
+    }
+    return fac * res;
 }
 
 #endif
