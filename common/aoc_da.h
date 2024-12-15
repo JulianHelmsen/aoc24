@@ -6,6 +6,10 @@
 #include <stdio.h>
 
 // TODO: assert(da.data != NULL);
+#define da_clear(da) \
+    do {\
+        (da).size = 0;\
+    }while(0)
 #define da_append(da, e)\
     do{\
         if((da).size == (da).capacity) {\
