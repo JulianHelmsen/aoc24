@@ -210,7 +210,7 @@ int main(const int argc, const char** argv) {
         }
 
         size_t score = max_connected_component(grid);
-        if(best_so_far > 1500) {
+        if(best_so_far > 200) {
             printf("\rtime: %lu\tcurrent score: %lu, best score: %lu.\t\t Press CTRL+C to terminate search!", i, score, best_so_far);
         }else{
             printf("\rtime: %lu\tscore: %lu, best: %lu              ", i, score, best_so_far);
