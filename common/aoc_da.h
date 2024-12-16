@@ -24,7 +24,8 @@
             (da).capacity = new_cap; \
             (da).data = data; \
         }\
-        (da).data[(da).size++] = (e); \
+        (da).data[(da).size] = (e); \
+        (da).size++;\
     }while(0)
 
 #define da_reserve(da, cap) \
