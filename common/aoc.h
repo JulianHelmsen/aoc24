@@ -4,6 +4,7 @@
 #define AOC_DA_IMPLEMENTATION
 #endif
 #include <aoc_da.h>
+#include <aoc_heap.h>
 #include <aoc_hashmap.h>
 #include <aoc_sview.h>
 #include <stdio.h>
