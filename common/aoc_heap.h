@@ -9,9 +9,9 @@
 
 #define heap_push(h, val, cmp, ctx) do{ \
         da_append((h), (val)); \
-        da_append((h), (h).data[(h.size) - 1]); \
-        const size_t AOC_HEAP_TMP_LOC = (h).size - 1; \
-        --(h).size;\
+        da_reserve(h, (h).size + 1);\
+        (h).data[h.size] = (h).data[(h).size - 1];\
+        const size_t AOC_HEAP_TMP_LOC = (h).size; \
         size_t aoc_heap_pos = (h).size; \
         while(aoc_heap_pos != 1) {\
             const size_t heap_parent_pos = aoc_heap_parent(aoc_heap_pos);\
