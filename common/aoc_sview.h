@@ -37,6 +37,8 @@ uint64_t sv_parse_u64(const struct sview v);
 int64_t sv_parse_i64(struct sview v);
 
 
+int sv_starts_with(const struct sview a, const struct sview b);
+
 #ifdef AOC_SVIEW_IMPLEMENTATION
 
 int64_t sv_find_char(const struct sview s, const char c) {
@@ -62,7 +64,6 @@ struct sview sv_create(const char* cstr) {
 }
 
 struct sview sv_create_with_len(const char* cstr, size_t len) {
-
     struct sview s;
     s.data = cstr;
     s.len = len;
@@ -179,6 +180,16 @@ int64_t sv_parse_i64(struct sview v) {
     return fac * res;
 }
 
+int sv_starts_with(const struct sview a, const struct sview b) {
+    if(b.len > a.len)
+        return 0;
+
+    for(size_t i = 0; i < b.len; ++i) {
+        if(b.data[i] != a.data[i])
+            return 0;
+    }
+    return 1;
+}
 #endif
 
 
