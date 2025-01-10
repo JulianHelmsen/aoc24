@@ -38,6 +38,7 @@ int64_t sv_parse_i64(struct sview v);
 
 
 int sv_starts_with(const struct sview a, const struct sview b);
+int sv_ends_with(const struct sview a, const struct sview b);
 
 #ifdef AOC_SVIEW_IMPLEMENTATION
 
@@ -186,6 +187,17 @@ int sv_starts_with(const struct sview a, const struct sview b) {
 
     for(size_t i = 0; i < b.len; ++i) {
         if(b.data[i] != a.data[i])
+            return 0;
+    }
+    return 1;
+}
+
+int sv_ends_with(const struct sview a, const struct sview b) {
+    if(b.len > a.len)
+        return 0;
+
+    for(size_t i = 0; i < b.len; ++i) {
+        if(a.data[a.len - b.len + i] != b.data[i])
             return 0;
     }
     return 1;
